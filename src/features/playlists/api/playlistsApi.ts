@@ -1,5 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import type { PlaylistsResponse } from "@/features/playlists/api/playlistsApi.types.ts"
+import type {
+  CreatePlaylistArgs,
+  PlaylistData,
+  PlaylistsResponse,
+} from "@/features/playlists/api/playlistsApi.types.ts"
 
 export const playlistsApi = createApi({
   reducerPath: "playlistsApi",
@@ -8,12 +12,23 @@ export const playlistsApi = createApi({
     headers: {
       "API-KEY": import.meta.env.VITE_API_KEY,
     },
+    prepareHeaders: (headers) => {
+      headers.set("Authorization", `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`)
+      return headers
+    },
   }),
   endpoints: (build) => ({
     fetchPlaylists: build.query<PlaylistsResponse, void>({
       query: () => ({ url: "/playlists", method: "GET" }),
     }),
+    createPlaylist: build.mutation<{ data: PlaylistData[] }, CreatePlaylistArgs>({
+      query: (body) => ({
+        url: "/playlists",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 })
 
-export const { useFetchPlaylistsQuery } = playlistsApi
+export const { useFetchPlaylistsQuery, useCreatePlaylistMutation } = playlistsApi

@@ -44,3 +44,15 @@ export type FetchPlaylistsArgs = {
   userId?: string
   trackId?: string
 }
+
+export type CreatePlaylistArgs = {
+  data: {
+    type: string
+    attributes: CreatePlaylistArgsAttributes
+  }
+}
+
+export type CreatePlaylistArgsAttributes = {
+  title: string
+  description: string
+}
