@@ -1,0 +1,21 @@
+import type { PlaylistData } from "@/features/playlists/api/playlistsApi.types.ts"
+
+type Props = {
+  playlist: PlaylistData
+  deletePlaylist: (playlistId: string) => void
+  editPlaylist: (playlist: PlaylistData) => void
+}
+
+
+export const PlaylistItem = ({ playlist, editPlaylist, deletePlaylist }: Props) => {
+  console.log(playlist)
+
+  return (
+    <div>
+      <div>title: {playlist.attributes.title}</div>
+      <div>userName: {playlist.attributes.user.name}</div>
+      <button onClick={() => deletePlaylist(playlist.id)}>delete</button>
+      <button onClick={() => editPlaylist(playlist)}>update</button>
+    </div>
+  )
+}

@@ -56,3 +56,16 @@ export type CreatePlaylistArgsAttributes = {
   title: string
   description: string
 }
+
+export type UpdatePlaylistRequest = {
+  data: {
+    type: "playlists"
+    attributes: UpdatePlaylistArgs
+  }
+}
+
+export type UpdatePlaylistArgs = {
+  title: string
+  description: string
+  tagIds: string[]
+}

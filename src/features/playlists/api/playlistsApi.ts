@@ -3,6 +3,7 @@ import type {
   CreatePlaylistArgs,
   PlaylistData,
   PlaylistsResponse,
+  UpdatePlaylistRequest,
 } from "@/features/playlists/api/playlistsApi.types.ts"
 
 export const playlistsApi = createApi({
@@ -34,7 +35,19 @@ export const playlistsApi = createApi({
         method: "DELETE",
       }),
     }),
+    updatePlaylist: build.mutation<void, { playlistId: string; body: UpdatePlaylistRequest }>({
+      query: ({ playlistId, body }) => ({
+        url: `/playlists/${playlistId}`,
+        method: "PUT",
+        body,
+      }),
+    }),
   }),
 })
 
-export const { useFetchPlaylistsQuery, useCreatePlaylistMutation, useDeletePlaylistMutation } = playlistsApi
+export const {
+  useFetchPlaylistsQuery,
+  useCreatePlaylistMutation,
+  useDeletePlaylistMutation,
+  useUpdatePlaylistMutation,
+} = playlistsApi

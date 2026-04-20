@@ -1,15 +1,35 @@
 import { useDeletePlaylistMutation, useFetchPlaylistsQuery } from "@/features/playlists/api/playlistsApi.ts"
 import s from "./PlaylistsPage.module.css"
 import { CreatePlaylistForm } from "./CreatePlaylistForm/CreatePlaylistForm"
+import { useState } from "react"
+import type { PlaylistData, UpdatePlaylistArgs } from "@/features/playlists/api/playlistsApi.types.ts"
+import { useForm } from "react-hook-form"
+import { PlaylistItem } from "@/features/playlists/ui/PlaylistsPage/PlaylistItem/PlaylistItem.tsx"
+import { EditPlaylistForm } from "@/features/playlists/ui/PlaylistsPage/EditPlaylistForm/EditPlaylistForm.tsx"
 
 export const PlaylistsPage = () => {
-  const { data } = useFetchPlaylistsQuery()
+  const [playlistId, setPlaylistId] = useState<string | null>(null)
+  const { register, handleSubmit, reset } = useForm<UpdatePlaylistArgs>()
 
+  const { data } = useFetchPlaylistsQuery()
   const [deletePlaylist] = useDeletePlaylistMutation()
 
   const deletePlaylistHandler = (playlistId: string) => {
     if (confirm("Are you sure you want to delete the playlist?")) {
       deletePlaylist(playlistId)
+    }
+  }
+
+  const editPlaylistHandler = (playlist: PlaylistData | null) => {
+    if (playlist) {
+      setPlaylistId(playlist.id)
+      reset({
+        title: playlist.attributes.title,
+        description: playlist.attributes.description,
+        tagIds: playlist.attributes.tags.map((t) => t.id),
+      })
+    } else {
+      setPlaylistId(null)
     }
   }
 
@@ -19,15 +39,28 @@ export const PlaylistsPage = () => {
       <CreatePlaylistForm />
       <div className={s.items}>
         {data?.data.map((playlist) => {
+          const isEditing = playlistId === playlist.id
+
           return (
             <div
               className={s.item}
               key={playlist.id}
             >
-              <div>title: {playlist.attributes.title}</div>
-              <div>description: {playlist.attributes.description}</div>
-              <div>userName: {playlist.attributes.user.name}</div>
-              <button onClick={() => deletePlaylistHandler(playlist.id)}>delete</button>
+              {isEditing ? (
+                <EditPlaylistForm
+                  editPlaylist={editPlaylistHandler}
+                  playlistId={playlist.id}
+                  setPlaylistId={setPlaylistId}
+                  register={register}
+                  handleSubmit={handleSubmit}
+                />
+              ) : (
+                <PlaylistItem
+                  deletePlaylist={deletePlaylistHandler}
+                  playlist={playlist}
+                  editPlaylist={editPlaylistHandler}
+                />
+              )}
             </div>
           )
         })}
