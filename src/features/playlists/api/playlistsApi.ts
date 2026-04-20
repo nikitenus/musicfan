@@ -18,9 +18,11 @@ export const playlistsApi = createApi({
       return headers
     },
   }),
+  tagTypes: ["Playlist"],
   endpoints: (build) => ({
     fetchPlaylists: build.query<PlaylistsResponse, void>({
       query: () => ({ url: "/playlists", method: "GET" }),
+      providesTags: ["Playlist"],
     }),
     createPlaylist: build.mutation<{ data: PlaylistData[] }, CreatePlaylistArgs>({
       query: (body) => ({
@@ -28,12 +30,14 @@ export const playlistsApi = createApi({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["Playlist"],
     }),
     deletePlaylist: build.mutation<void, string>({
       query: (playlistId) => ({
         url: `/playlists/${playlistId}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Playlist"],
     }),
     updatePlaylist: build.mutation<void, { playlistId: string; body: UpdatePlaylistRequest }>({
       query: ({ playlistId, body }) => ({
@@ -41,6 +45,7 @@ export const playlistsApi = createApi({
         method: "PUT",
         body,
       }),
+      invalidatesTags: ["Playlist"],
     }),
   }),
 })
