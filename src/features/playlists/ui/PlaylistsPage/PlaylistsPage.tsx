@@ -10,8 +10,9 @@ import { EditPlaylistForm } from "@/features/playlists/ui/PlaylistsPage/EditPlay
 export const PlaylistsPage = () => {
   const [playlistId, setPlaylistId] = useState<string | null>(null)
   const { register, handleSubmit, reset } = useForm<UpdatePlaylistArgs>()
+  const [search, setSearch] = useState("")
 
-  const { data } = useFetchPlaylistsQuery()
+  const { data, isLoading } = useFetchPlaylistsQuery({ search })
   const [deletePlaylist] = useDeletePlaylistMutation()
 
   const deletePlaylistHandler = (playlistId: string) => {
@@ -37,7 +38,13 @@ export const PlaylistsPage = () => {
     <div className={s.container}>
       <h1>Playlists page</h1>
       <CreatePlaylistForm />
+      <input
+        type="search"
+        placeholder={"Search playlist by title"}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
       <div className={s.items}>
+        {!data?.data.length && !isLoading && <h2>Playlists not found</h2>}
         {data?.data.map((playlist) => {
           const isEditing = playlistId === playlist.id
 
